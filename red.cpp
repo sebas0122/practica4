@@ -56,9 +56,11 @@ bool red::verdadconexion(string a, string b){
 string red::creatring2(){
     string conexiones="";
     string parcial="";
+    string parametro="";
     map<string, enrutador>::iterator ite;
     for(ite=enrutadores.begin(); ite!=enrutadores.end(); ++ite){
-        parcial=ite->second.creastring();
+        parametro=ite->first;
+        parcial=ite->second.creastring(parametro);
         conexiones+=parcial;
     }
     return conexiones;
@@ -73,103 +75,127 @@ void red::caminos(string letras,string nodoi,string nodof){
     int con2=0;
     int s=0;
     int t=0;
+    int indice=0;
+    string nodos="";
+    string nodo="";
     map<string, enrutador>::iterator ete;
     for(ete=enrutadores.begin();ete!=enrutadores.end();ete++){
-       con2++;
-       if(ete->first==nodoi){
-        s=con2-1;
-       }
-       else if(ete->first==nodof){
-           t=con2-1;
-       }
+        nodo=ete->first;
+        nodos+=nodo;
     }
-    con2=0;
+    string tu="";
+    for (int i=0;i<nodos.size();i++){
+        tu=nodos[i];
+        if(nodoi==tu){
+            s=i;
+        }
+        else if(tu==nodof){
+            t=i;
+        }
+    }
     int lon=enrutadores.size();
-    int matriz[lon][lon];
+    int matriz[lon][lon]={};
     for (int i=0;i<lon;i++){
         for (int j=0;j<lon;j++){
             matriz[i][j]=-1;
         }
     }
     int con=0;
-    con2=0;
     int a=0;
     int b=0;
     int c=0;
+    string control="I";
     string pa="";
-    for (int i=0;i<letras.length();i++){
+    string ind="";
+    string num="";
+    for (int i=0;i<letras.size();i++){
         con++;
         pa=letras[i];
+        while(letras[i+1]>=48 && letras[i+1]<=57 && con==3){
+            i++;
+            pa+=letras[i];
+        }
         if (con==1){
-            map<string, enrutador>::iterator ti;
-            for(ti=enrutadores.begin();ti!=enrutadores.end();ti++){
-               con2++;
-               if(ti->first==pa){
-                a=con2-1;
-                con2=0;
-               }
+            for(int j=0;j<nodos.size();j++){
+                ind=nodos[j];
+                if(ind==pa){
+                    a=j;
+                    break;
+                }
             }
         }
         else if(con==2){
-            map<string, enrutador>::iterator ti;
-            for(ti=enrutadores.begin();ti!=enrutadores.end();ti++){
-                con2++;
-
-                if(ti->first==pa){
-                 b=con2-1;
-                 con2=0;
+            for(int k=0;k<nodos.size();k++){
+                ind=nodos[k];
+                if(ind==pa){
+                    b=k;
+                    break;
                 }
             }
         }
         else if(con==3){
-            c=stoi(pa);
+            if (pa==control){
+                c=-1;
+                matriz[a][b]=c;
+            }
+            else{
+                c=stoi(pa);
+                matriz[a][b]=c;
+            }
+            a=0;
+            b=0;
+            c=0;
+            con=0;
+            con2=0;
+            pa="";
         }
-        matriz[a][b]=c;
-        a=0;
-        b=0;
-        c=0;
-        con=0;
-        con2=0;
     }
-    vector<int> dist;
-    vector<int> prev(lon, -1);
-    typedef pair<int, int> pii;
-    priority_queue<pair<int, int>, vector<pair<int, int>>, greater<pair<int, int>>> pq;
-    dist.resize(lon, 100000); // Inicializar distancias como infinito
-    dist[s] = 0; // La distancia desde el nodo de inicio a sí mismo es 0
-    pq.push(make_pair(0, s)); // Agregar el nodo de inicio a la cola de prioridad
-    prev.resize(lon, -1); // Inicializar nodos predecesores con -1
+    int distancia[lon], anterior[lon];
+        bool visitado[lon] = {false};
 
-    while (!pq.empty()) {
-        int u = pq.top().second;
-        pq.pop();
+        for (int i = 0; i < lon; i++) {
+            distancia[i] = INT_MAX;
+            anterior[i] = -1;
+        }
 
-        for (int v = 0; v < lon; v++) {
-            if (matriz[u][v] != -1) { // Si hay una arista entre u y v
-                int w = matriz[u][v];
-                if (dist[u] + w < dist[v]) {
-                    dist[v] = dist[u] + w;
-                    prev[v] = u; // Actualizar nodo predecesor en camino mínimo
-                    pq.push(make_pair(-dist[v], v));
+        distancia[s] = 0;
+
+        for (int i = 0; i < lon - 1; i++) {
+            int u = -1;
+            for (int j = 0; j < lon; j++) {
+                if (!visitado[j] && (u == -1 || distancia[j] < distancia[u])) {
+                    u = j;
+                }
+            }
+            visitado[u] = true;
+
+            for (int v = 0; v < lon; v++) {
+                int peso = matriz[u][v];
+                if (peso != -1 && distancia[u] + peso < distancia[v]) {
+                    distancia[v] = distancia[u] + peso;
+                    anterior[v] = u;
                 }
             }
         }
-    }
 
-    // Construir camino mínimo desde t hasta s
-    vector<int> path;
-    int u = t;
-    while (u != -1) {
-        path.insert(path.begin(), u);
-        u = prev[u];
-    }
-    // Imprimir camino mínimo
-    cout << "Camino mínimo desde " << s << " hasta " << t << ": ";
-    for (int i = 0; i < path.size(); i++) {
-        cout << path[i] << " ";
-    }
-    cout << endl;
-    cout<<"y el valor es de: "<<dist[t];
+        if (distancia[t] == INT_MAX) {
+            cout << "No hay camino desde " << nodoi << " hasta " << nodof << endl;
+        }
+        else {
+            cout << "Camino mínimo desde " << nodoi << " hasta " << nodof << ": ";
+            vector<int> camino;
+            for (int v = t; v != -1; v = anterior[v]) {
+                camino.push_back(v);
+            }
+            reverse(camino.begin(), camino.end());
+            string l="";
+            for (int v : camino) {
+                l=nodos[v];
+                cout << l << " ";
+            }
+            cout << endl;
+            cout << "Costo: " << distancia[t] << endl;
+        }
 }
 
 void pruebared(){
@@ -189,6 +215,8 @@ void pruebared(){
     cout<<endl;
     barbosa.removenrutador("C");
     barbosa.veored();
+    int df=barbosa.sizeenru();
     string letras=barbosa.creatring2();
+    df=letras.size();
     barbosa.caminos(letras,"A","D");
 }

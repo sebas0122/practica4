@@ -8,6 +8,7 @@
 #include <utility>
 #include <limits.h>
 #include <climits>
+#include <algorithm>
 
 using namespace std;
 
@@ -24,7 +25,7 @@ class enrutador{
         void modinodo(string nodo, int newcosto);
         void veonodo();
         bool existencianodo(string name);
-        string creastring();
+        string creastring(string a);
 };
 
 void pruebaenrutador();

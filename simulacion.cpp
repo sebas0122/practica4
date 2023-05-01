@@ -7,8 +7,8 @@ void simulacion(){
     string nodo1="";
     string nodo2="";
     int costo=0;
-    while (menu!=5){
-        cout<<endl<<"marque:\n1 para agregar un enrutador\n2 para agregar conexiones entre los enrutadores ya existentes\n3 para eliminar enrutadores\n4 para eliminar conexiones\n5 para modificar una conexion\n6 para visualizar la red completa\n7 para salir del menu\n: ";
+    while (menu!=8){
+        cout<<endl<<"marque:\n1 para agregar un enrutador\n2 para agregar conexiones entre los enrutadores ya existentes\n3 para eliminar enrutadores\n4 para eliminar conexiones\n5 para modificar una conexion\n6 para encontrar la mejor ruta de un enrutador a otro\n7 para ver la red completa\n8 para salir del menu\n: ";
         cin>>menu;
         if (menu==1){
             cout<<endl<<"ingrese el nombre del nuevo enrutador: ";
@@ -27,7 +27,7 @@ void simulacion(){
             cin>>nodo2;
             cout<<endl<<"ingrese el costo que hay entre estos dos enrutadores: ";
             cin>>costo;
-            if (distribucion.existencia(nodo1)==true && distribucion.existencia(nodo2)==true && distribucion.verdadconexion(nodo1,nodo2)==true){
+            if (distribucion.existencia(nodo1)==true && distribucion.existencia(nodo2)==true && distribucion.verdadconexion(nodo1,nodo2)==false){
                 distribucion.newconexion(nodo1,nodo2,costo);
             }
             else{
@@ -70,7 +70,15 @@ void simulacion(){
                 cout<<"no se pudo modificar la conexion porque o un enrutador no existe o no habia conexion previa entre los enrutadores.\n";
             }
         }
-        else if(menu==6){
+        else if (menu==6){
+            string letras=distribucion.creatring2();
+            cout<<endl<<"ingrese el enrutador de inicio: ";
+            cin>>nodo1;
+            cout<<endl<<"ingrese el enrutador de llegada: ";
+            cin>>nodo2;
+            distribucion.caminos(letras,nodo1,nodo2);
+        }
+        else if(menu==7){
             distribucion.veored();
         }
         nombre="";

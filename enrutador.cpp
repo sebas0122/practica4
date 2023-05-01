@@ -28,14 +28,14 @@ bool enrutador::existencianodo(string name){
     }
 }
 
-string enrutador::creastring(){
+string enrutador::creastring(string a){
     string info="";
-    string principio="";
+    string principio=a;
     string num="";
     map<string, int>::iterator it;
     for(it=nodos.begin(); it!=nodos.end(); ++it){
-        if (it == nodos.begin()){
-            principio=it->first;
+        if (it->first == principio){
+            info+=principio+principio+"I";
         }
         else{
             num=to_string(it->second);
