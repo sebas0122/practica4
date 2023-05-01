@@ -28,6 +28,23 @@ bool enrutador::existencianodo(string name){
     }
 }
 
+string enrutador::creastring(){
+    string info="";
+    string principio="";
+    string num="";
+    map<string, int>::iterator it;
+    for(it=nodos.begin(); it!=nodos.end(); ++it){
+        if (it == nodos.begin()){
+            principio=it->first;
+        }
+        else{
+            num=to_string(it->second);
+            info+=principio+it->first+num;
+        }
+    }
+    return info;
+}
+
 void pruebaenrutador(){
     enrutador A("A");
     A.veonodo();

@@ -3,6 +3,12 @@
 #include <iostream>
 #include <string>;
 #include <map>
+#include <queue>
+#include <vector>
+#include <utility>
+#include <limits.h>
+#include <climits>
+
 using namespace std;
 
 
@@ -18,6 +24,7 @@ class enrutador{
         void modinodo(string nodo, int newcosto);
         void veonodo();
         bool existencianodo(string name);
+        string creastring();
 };
 
 void pruebaenrutador();
